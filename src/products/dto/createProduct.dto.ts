@@ -5,6 +5,7 @@ import {
   IsNotEmpty,
   MaxLength,
 } from 'class-validator';
+import { Type, Transform } from 'class-transformer';
 
 export class CreateProductDto {
   @IsNotEmpty()
@@ -17,16 +18,16 @@ export class CreateProductDto {
   @MaxLength(500)
   description: string;
 
+  @Type(() => Number)
   @IsNotEmpty()
   @IsNumber()
   price: number;
 
+  @Type(() => Boolean)
   @IsNotEmpty()
   @IsBoolean()
   available: boolean;
 
-  @MaxLength(20, {
-    each: true,
-  })
+  @Transform(({ value }) => JSON.parse(value))
   categories: Array<number>;
 }

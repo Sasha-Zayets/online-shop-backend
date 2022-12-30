@@ -19,9 +19,13 @@ export class ProductsService {
     return this.productRepository.findOneBy({ id: idProduct });
   }
 
-  async createProduct(product: CreateProductDto): Promise<Product> {
+  async createProduct(
+    product: CreateProductDto,
+    imagePath: string,
+  ): Promise<Product> {
     return this.productRepository.save({
       ...product,
+      image: imagePath,
     });
   }
 
@@ -38,5 +42,25 @@ export class ProductsService {
     await this.productRepository.delete({ id: idProduct });
 
     return { status: 'deleted' };
+  }
+
+  async updateImageForProduct(idProduct: number, newImagePath: string) {
+    const updatedProduct = await this.deleteImageForProduct(idProduct);
+
+    return this.updateProduct(idProduct, {
+      ...updatedProduct,
+      image: newImagePath,
+    });
+  }
+
+  async deleteImageForProduct(idProduct: number): Promise<Product> {
+    const product = await this.productRepository.findOneBy({ id: idProduct });
+    const updatedProduct = {
+      ...product,
+      image: null,
+    };
+    await this.productRepository.update({ id: idProduct }, updatedProduct);
+
+    return updatedProduct;
   }
 }

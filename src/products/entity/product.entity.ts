@@ -1,7 +1,7 @@
 import { Entity, Column, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Category } from 'src/categories/entity/category.entity';
 
-@Entity()
+@Entity('products')
 export class Product {
   @PrimaryGeneratedColumn()
   id: number;
@@ -12,8 +12,8 @@ export class Product {
   @Column()
   description: string;
 
-  // @Column()
-  // image: any;
+  @Column({ default: null })
+  image: string | null;
 
   @Column()
   price: number;
