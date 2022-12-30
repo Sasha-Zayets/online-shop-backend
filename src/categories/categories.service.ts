@@ -11,28 +11,33 @@ export class CategoriesService {
     private readonly categoryRepository: Repository<Category>,
   ) {}
 
-  async getAllCategories() {
+  async getAllCategories(): Promise<Category[]> {
     return this.categoryRepository.find();
   }
 
-  async createCategory(category: CreateCategoryDto) {
+  async createCategory(category: CreateCategoryDto): Promise<Category> {
     return this.categoryRepository.save({
       name: category.name,
     });
   }
 
-  async updateCategory(id: number, category: UpdateCategoryDto) {
+  async updateCategory(
+    id: number,
+    category: UpdateCategoryDto,
+  ): Promise<Category> {
     await this.categoryRepository.update({ id }, category);
 
     return await this.categoryRepository.findOneBy({ id });
   }
 
-  async deleteCategory(id: number) {
+  async deleteCategory(id: number): Promise<{ status: string }> {
     const category = await this.categoryRepository.findOneBy({ id });
     if (!category) {
       throw new NotFoundException('Category not found');
     }
 
-    return this.categoryRepository.delete({ id });
+    await this.categoryRepository.delete({ id });
+
+    return { status: 'deleted' };
   }
 }

@@ -11,7 +11,7 @@ export class ProductsService {
     private readonly productRepository: Repository<Product>,
   ) {}
 
-  async findAllProduct() {
+  async findAllProduct(): Promise<Product[]> {
     return this.productRepository.find();
   }
 
@@ -38,13 +38,16 @@ export class ProductsService {
     return this.findProductById(idProduct);
   }
 
-  async deleteProduct(idProduct: number) {
+  async deleteProduct(idProduct: number): Promise<{ status: string }> {
     await this.productRepository.delete({ id: idProduct });
 
     return { status: 'deleted' };
   }
 
-  async updateImageForProduct(idProduct: number, newImagePath: string) {
+  async updateImageForProduct(
+    idProduct: number,
+    newImagePath: string,
+  ): Promise<Product> {
     const updatedProduct = await this.deleteImageForProduct(idProduct);
 
     return this.updateProduct(idProduct, {
