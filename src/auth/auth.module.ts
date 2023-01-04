@@ -4,6 +4,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtStrategy } from './strategy/jwt.strategy';
+import { UsersModule } from 'src/users/users.module';
 
 const jwtFactory = {
   imports: [ConfigModule.forRoot()],
@@ -17,7 +18,7 @@ const jwtFactory = {
 };
 
 @Module({
-  imports: [ConfigModule, JwtModule.registerAsync(jwtFactory)],
+  imports: [ConfigModule, UsersModule, JwtModule.registerAsync(jwtFactory)],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy],
 })
