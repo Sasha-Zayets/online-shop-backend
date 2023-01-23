@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { Product } from './entity/product.entity';
 import { CreateProductDto, UpdateProductDto } from './dto';
 
@@ -17,6 +17,12 @@ export class ProductsService {
 
   async findProductById(idProduct: number): Promise<Product> {
     return this.productRepository.findOneBy({ id: idProduct });
+  }
+
+  async findProductsByIds(productsIds: number[]) {
+    return this.productRepository.find({
+      where: { id: In(productsIds) },
+    });
   }
 
   async createProduct(

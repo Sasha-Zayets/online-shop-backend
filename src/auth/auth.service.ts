@@ -33,7 +33,7 @@ export class AuthService {
     const expiresIn = this.configService.get('JWT_EXP_H');
     return {
       access_token: this.jwtService.sign(
-        { email, _id: user.id },
+        { email, id: user.id },
         { secret: secretKey, expiresIn },
       ),
     };

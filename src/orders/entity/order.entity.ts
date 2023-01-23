@@ -18,14 +18,14 @@ export class Order {
   userId: number;
 
   @OneToMany(() => Product, (product) => product.id)
-  products: [];
+  products: number[];
 
   @Column()
   totalPrice: number;
 
-  @Column()
+  @Column({ default: TYPE_PAYMENT.MONEY })
   typePayment: TYPE_PAYMENT;
 
   @Column()
-  comment: string;
+  comment?: string;
 }
