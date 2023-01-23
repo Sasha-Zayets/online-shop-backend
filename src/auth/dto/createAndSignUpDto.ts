@@ -1,4 +1,10 @@
-import { IsEmail, IsNotEmpty, MinLength } from 'class-validator';
+import {
+  IsEmail,
+  IsBoolean,
+  IsOptional,
+  IsNotEmpty,
+  MinLength,
+} from 'class-validator';
 
 export class CreateAndSignUpDto {
   @IsEmail()
@@ -9,4 +15,8 @@ export class CreateAndSignUpDto {
     message: 'Password is too short',
   })
   password: string;
+
+  @IsOptional()
+  @IsBoolean()
+  isAdmin?: boolean;
 }

@@ -26,7 +26,7 @@ export class AuthController {
 
   @Post('signup')
   async createUser(@Body() user: CreateAndSignUpDto) {
-    const { password, email } = user;
+    const { password, email, isAdmin } = user;
     const resultSearch = await this.usersService.findByUserEmail(email);
 
     if (resultSearch) {
@@ -40,6 +40,8 @@ export class AuthController {
     }
 
     const hashedPassword: string = await bcrypt.hash(password, SALT_OR_ROUNDS);
-    return await this.usersService.createUser(email, hashedPassword);
+    return isAdmin
+      ? this.usersService.createAdminUser(email, hashedPassword)
+      : this.usersService.createUser(email, hashedPassword);
   }
 }
