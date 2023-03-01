@@ -15,6 +15,10 @@ export class CategoriesService {
     return this.categoryRepository.find();
   }
 
+  async getCategoryById(id: number): Promise<Category> {
+    return this.categoryRepository.findOneBy({ id });
+  }
+
   async createCategory(category: CreateCategoryDto): Promise<Category> {
     return this.categoryRepository.save({
       name: category.name,

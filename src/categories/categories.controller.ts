@@ -20,12 +20,17 @@ export class CategoriesController {
 
   @Get()
   async getAllCategories() {
-    return await this.categoriesService.getAllCategories();
+    return this.categoriesService.getAllCategories();
+  }
+
+  @Get(':id')
+  async getCategory(@Param('id', ParseIntPipe) id: number) {
+    return this.categoriesService.getCategoryById(id);
   }
 
   @Post()
   async createCategory(@Body() category: CreateCategoryDto) {
-    return await this.categoriesService.createCategory(category);
+    return this.categoriesService.createCategory(category);
   }
 
   @Put(':id')
@@ -33,11 +38,11 @@ export class CategoriesController {
     @Param('id', ParseIntPipe) id: number,
     @Body() category: UpdateCategoryDto,
   ) {
-    return await this.categoriesService.updateCategory(id, category);
+    return this.categoriesService.updateCategory(id, category);
   }
 
   @Delete(':id')
   async deleteCategory(@Param('id', ParseIntPipe) id: number) {
-    return await this.categoriesService.deleteCategory(id);
+    return this.categoriesService.deleteCategory(id);
   }
 }
