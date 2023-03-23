@@ -1,4 +1,5 @@
 import * as uuid from 'uuid';
+import { Request } from 'express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
 import {
@@ -16,7 +17,7 @@ import {
   ParseFilePipe,
   MaxFileSizeValidator,
   FileTypeValidator,
-  UseGuards,
+  UseGuards, Req,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ProductsService } from './products.service';
@@ -52,6 +53,7 @@ export class ProductsController {
     }),
   )
   async createProduct(
+    @Req() req: Request,
     @Body(new ValidationPipe({ transform: true })) product: CreateProductDto,
     @UploadedFile(
       new ParseFilePipe({
@@ -63,8 +65,10 @@ export class ProductsController {
     )
     image: Express.Multer.File,
   ) {
+    const fullUrl = `${req.protocol}${req.get('Host')}`;
+
     const pathImage = image.path.replace('public', '');
-    return this.productsServce.createProduct(product, pathImage);
+    return this.productsServce.createProduct(product, `${fullUrl}${pathImage}`);
   }
 
   @Put(':id')
