@@ -65,7 +65,7 @@ export class ProductsController {
     )
     image: Express.Multer.File,
   ) {
-    const fullUrl = `${req.protocol}${req.get('Host')}`;
+    const fullUrl = `${req.protocol}://${req.get('Host')}`;
 
     const pathImage = image.path.replace('public', '');
     return this.productsServce.createProduct(product, `${fullUrl}${pathImage}`);
