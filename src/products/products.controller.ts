@@ -24,6 +24,7 @@ import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/createProduct.dto';
 import { UpdateProductDto } from './dto/updateProduct.dto';
 import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
+import { MAX_SIZE_FOR_IMAGE } from './products.constants';
 
 @Controller('products')
 @UseGuards(JwtAuthGuard)
@@ -58,7 +59,7 @@ export class ProductsController {
     @UploadedFile(
       new ParseFilePipe({
         validators: [
-          new MaxFileSizeValidator({ maxSize: 100000 }),
+          new MaxFileSizeValidator({ maxSize: MAX_SIZE_FOR_IMAGE }),
           new FileTypeValidator({ fileType: 'image/jpeg' }),
         ],
       }),
@@ -97,19 +98,21 @@ export class ProductsController {
     }),
   )
   async updateImageForProduct(
+    @Req() req: Request,
     @Param('idProduct', ParseIntPipe) idProduct: number,
     @UploadedFile(
       new ParseFilePipe({
         validators: [
-          new MaxFileSizeValidator({ maxSize: 100000 }),
+          new MaxFileSizeValidator({ maxSize: MAX_SIZE_FOR_IMAGE }),
           new FileTypeValidator({ fileType: 'image/jpeg' }),
         ],
       }),
     )
     image: Express.Multer.File,
   ) {
+    const fullUrl = `${req.protocol}://${req.get('Host')}`;
     const pathImage = image.path.replace('public', '');
-    return this.productsServce.updateImageForProduct(idProduct, pathImage);
+    return this.productsServce.updateImageForProduct(idProduct, `${fullUrl}${pathImage}`);
   }
 
   @Delete('images/:idProduct')
