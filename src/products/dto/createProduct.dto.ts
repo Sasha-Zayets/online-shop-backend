@@ -28,6 +28,6 @@ export class CreateProductDto {
   @IsBoolean()
   available: boolean;
 
-  @Transform(({ value }) => JSON.parse(value))
+  @Transform(({ value }) => value.map(Number))
   categories: Array<number>;
 }
