@@ -1,4 +1,4 @@
-import {Entity, Column, OneToMany, PrimaryGeneratedColumn} from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 import { Category } from 'src/categories/entity/category.entity';
 
 @Entity('products')
@@ -21,6 +21,8 @@ export class Product {
   @Column()
   available: boolean;
 
-  @OneToMany(() => Category, (category) => category.id)
-  categories: number[];
+  @OneToMany(() => Category, (category) => category.product, {
+    eager: true
+  })
+  categories: Category[];
 }

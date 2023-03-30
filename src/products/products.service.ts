@@ -3,12 +3,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { Product } from './entity/product.entity';
 import { CreateProductDto, UpdateProductDto } from './dto';
+import { CategoriesService } from "../categories/categories.service";
+import { Category } from "../categories/entity/category.entity";
 
 @Injectable()
 export class ProductsService {
   constructor(
     @InjectRepository(Product)
     private readonly productRepository: Repository<Product>,
+    private readonly categoriesService: CategoriesService,
   ) {}
 
   async findAllProduct(): Promise<Product[]> {
@@ -28,9 +31,12 @@ export class ProductsService {
   async createProduct(
     product: CreateProductDto,
     imagePath: string,
-  ): Promise<Product> {
+  ): Promise<any> {
+    const categories = await this.getCategoriesForProduct(product.categories);
+
     return this.productRepository.save({
       ...product,
+      categories,
       image: imagePath,
     });
   }
@@ -39,9 +45,20 @@ export class ProductsService {
     idProduct: number,
     product: UpdateProductDto,
   ): Promise<Product> {
-    await this.productRepository.update({ id: idProduct }, product);
+    const categories = await this.getCategoriesForProduct(product.categories);
+
+    await this.productRepository.update({ id: idProduct }, {
+      ...product,
+      categories,
+    });
 
     return this.findProductById(idProduct);
+  }
+
+  async getCategoriesForProduct(categories: number[]): Promise<Category[]> {
+    return Promise.all(
+      categories.map((category) => this.categoriesService.getCategoryById(category)),
+    );
   }
 
   async deleteProduct(idProduct: number): Promise<{ status: string }> {
@@ -55,10 +72,12 @@ export class ProductsService {
     newImagePath: string,
   ): Promise<Product> {
     const updatedProduct = await this.deleteImageForProduct(idProduct);
+    const categories = updatedProduct.categories.map((el) => el.id);
 
     return this.updateProduct(idProduct, {
       ...updatedProduct,
       image: newImagePath,
+      categories,
     });
   }
 
