@@ -31,7 +31,7 @@ export class ProductsService {
   async createProduct(
     product: CreateProductDto,
     imagePath: string,
-  ): Promise<any> {
+  ): Promise<Product> {
     const categories = await this.getCategoriesForProduct(product.categories);
 
     return this.productRepository.save({
@@ -46,11 +46,13 @@ export class ProductsService {
     product: UpdateProductDto,
   ): Promise<Product> {
     const categories = await this.getCategoriesForProduct(product.categories);
-
-    await this.productRepository.update({ id: idProduct }, {
+    const findProduct = await this.productRepository.findOne({ where: { id: idProduct }});
+    Object.assign(findProduct, {
       ...product,
       categories,
     });
+
+    await this.productRepository.save(findProduct);
 
     return this.findProductById(idProduct);
   }

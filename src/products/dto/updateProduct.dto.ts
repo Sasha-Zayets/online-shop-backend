@@ -37,8 +37,5 @@ export class UpdateProductDto {
   available: boolean;
 
   @IsOptional()
-  @MaxLength(20, {
-    each: true,
-  })
   categories: Array<number>;
 }
