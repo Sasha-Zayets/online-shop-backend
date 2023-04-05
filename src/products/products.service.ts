@@ -4,7 +4,6 @@ import { In, Repository } from 'typeorm';
 import { Product } from './entity/product.entity';
 import { CreateProductDto, UpdateProductDto } from './dto';
 import { CategoriesService } from "../categories/categories.service";
-import { Category } from "../categories/entity/category.entity";
 
 @Injectable()
 export class ProductsService {
@@ -22,7 +21,7 @@ export class ProductsService {
     return this.productRepository.findOneBy({ id: idProduct });
   }
 
-  async findProductsByIds(productsIds: number[]) {
+  async findProductsByIds(productsIds: number[]): Promise<Product[]> {
     return this.productRepository.find({
       where: { id: In(productsIds) },
     });
@@ -32,7 +31,7 @@ export class ProductsService {
     product: CreateProductDto,
     imagePath: string,
   ): Promise<Product> {
-    const categories = await this.getCategoriesForProduct(product.categories);
+    const categories = await this.categoriesService.getCategoriesForProduct(product.categories);
 
     return this.productRepository.save({
       ...product,
@@ -45,7 +44,7 @@ export class ProductsService {
     idProduct: number,
     product: UpdateProductDto,
   ): Promise<Product> {
-    const categories = await this.getCategoriesForProduct(product.categories);
+    const categories = await this.categoriesService.getCategoriesForProduct(product.categories);
     const findProduct = await this.productRepository.findOne({ where: { id: idProduct }});
     Object.assign(findProduct, {
       ...product,
@@ -55,12 +54,6 @@ export class ProductsService {
     await this.productRepository.save(findProduct);
 
     return this.findProductById(idProduct);
-  }
-
-  async getCategoriesForProduct(categories: number[]): Promise<Category[]> {
-    return Promise.all(
-      categories.map((category) => this.categoriesService.getCategoryById(category)),
-    );
   }
 
   async deleteProduct(idProduct: number): Promise<{ status: string }> {
@@ -92,5 +85,12 @@ export class ProductsService {
     await this.productRepository.update({ id: idProduct }, updatedProduct);
 
     return updatedProduct;
+  }
+
+  getTotalPriceForProducts(products: Product[]): number {
+    return products.reduce(
+        (totalPrice, product) => totalPrice + product.price,
+        0,
+    );
   }
 }

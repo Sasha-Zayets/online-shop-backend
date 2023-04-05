@@ -1,5 +1,6 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import {Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToOne} from 'typeorm';
 import { Category } from 'src/categories/entity/category.entity';
+import {Order} from "../../orders/entity/order.entity";
 
 @Entity('products')
 export class Product {
@@ -25,4 +26,7 @@ export class Product {
     eager: true
   })
   categories: Category[];
+
+  @ManyToOne(() => Order, (order) => order.products)
+  order: Product;
 }

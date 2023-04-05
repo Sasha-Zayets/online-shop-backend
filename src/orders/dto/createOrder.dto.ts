@@ -18,7 +18,7 @@ export class CreateOrderDto {
   @IsNotEmpty()
   @IsString()
   @IsEnum(TYPE_PAYMENT)
-  type_payment: string;
+  typePayment: string;
 
   @IsOptional()
   @IsString()

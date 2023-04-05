@@ -44,4 +44,10 @@ export class CategoriesService {
 
     return { status: 'deleted' };
   }
+
+  async getCategoriesForProduct(categories: number[]): Promise<Category[]> {
+    return Promise.all(
+        categories.map((category) => this.getCategoryById(category)),
+    );
+  }
 }

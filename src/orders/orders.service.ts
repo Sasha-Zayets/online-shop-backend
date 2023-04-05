@@ -4,8 +4,8 @@ import { Order } from './entity/order.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateOrderDto } from './dto/createOrder.dto';
 import { ProductsService } from 'src/products/products.service';
-import { Product } from 'src/products/entity/product.entity';
 import { DELETE_STATUSES, DeleteEntityStatus } from 'src/common/common.types';
+import { UsersService } from "../users/users.service";
 
 @Injectable()
 export class OrdersService {
@@ -13,6 +13,7 @@ export class OrdersService {
     @InjectRepository(Order)
     private readonly orderRepository: Repository<Order>,
     private readonly productsService: ProductsService,
+    private readonly usersService: UsersService,
   ) {}
 
   async getAllOrders(): Promise<Order[]> {
@@ -23,12 +24,15 @@ export class OrdersService {
     const products = await this.productsService.findProductsByIds(
       order.products,
     );
-    const totalPrice = this.getTotalPriceForProducts(products);
+    const customer = await this.usersService.findUserById(userId);
+    const totalPrice = this.productsService.getTotalPriceForProducts(products);
 
     return this.orderRepository.save({
-      ...order,
-      userId,
+      products,
+      customer,
       totalPrice,
+      comment: order.comment,
+      typePayment: order.typePayment,
     });
   }
 
@@ -45,12 +49,5 @@ export class OrdersService {
 
   async findOrderById(orderId: number): Promise<Order | null> {
     return this.orderRepository.findOneBy({ id: orderId });
-  }
-
-  getTotalPriceForProducts(products: Product[]) {
-    return products.reduce(
-      (totalPrice, product) => totalPrice + product.price,
-      0,
-    );
   }
 }

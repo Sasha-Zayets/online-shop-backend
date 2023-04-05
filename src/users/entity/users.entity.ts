@@ -1,4 +1,6 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Exclude } from 'class-transformer';
+import { Order } from 'src/orders/entity/order.entity';
+import {Entity, Column, PrimaryGeneratedColumn, OneToOne, OneToMany} from 'typeorm';
 import { ROLES } from '../users.constant';
 
 @Entity('users')
@@ -10,6 +12,7 @@ export class User {
   email: string;
 
   @Column()
+  @Exclude({ toPlainOnly: true })
   password: string;
 
   @Column({ default: ROLES.CUSTOMER })

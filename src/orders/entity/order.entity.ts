@@ -5,6 +5,8 @@ import {
   PrimaryGeneratedColumn,
   OneToMany,
   OneToOne,
+  JoinColumn,
+  ManyToOne,
 } from 'typeorm';
 import { TYPE_PAYMENT } from '../orders.constant';
 import { User } from 'src/users/entity/users.entity';
@@ -14,17 +16,21 @@ export class Order {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToOne(() => User, (user) => user.id)
-  userId: number;
+  @ManyToOne(() => User, (user) => user.id, {
+    eager: true,
+  })
+  customer: User;
 
-  @OneToMany(() => Product, (product) => product.id)
-  products: number[];
+  @OneToMany(() => Product, (product) => product.order, {
+    eager: true
+  })
+  products: Product[];
 
   @Column()
   totalPrice: number;
 
   @Column({ default: TYPE_PAYMENT.MONEY })
-  typePayment: TYPE_PAYMENT;
+  typePayment: string;
 
   @Column()
   comment?: string;
